@@ -92,24 +92,27 @@ const splChart = new Chart(ctx, {
 // =========================
 // MQTT CONNECTION
 // =========================
-const client = mqtt.connect("ws://192.168.88.221:9001");
+const client = new Paho.MQTT.Client(
+  "b8ae4809915f4027b2d18c7fc219b204.s1.eu.hivemq.cloud",
+  8884,
+  "webclient_" + Math.random()
+);
 
-client.on("connect", () => {
-  console.log("MQTT connected");
-  statusEl.textContent = "STATUS: CONNECTED";
-  client.subscribe("spl/data");
-});
+client.onConnectionLost = function () {
+  console.warn("MQTT disconnected");
+  statusEl.textContent = "STATUS: DISCONNECTED";
+};
 
-client.on("message", (topic, message) => {
-  const data = JSON.parse(message.toString());
+client.onMessageArrived = function (message) {
+  const data = JSON.parse(message.payloadString);
   const spl = data.spl;
+
 
   // Update main value
   splEl.textContent = spl.toFixed(1);
 
   // Update status
   updateStatus(spl);
-
   // Update chart
   const now = new Date().toLocaleTimeString();
 
@@ -123,16 +126,18 @@ client.on("message", (topic, message) => {
 
   // Update stats (based on current window)
   updateStats();
-
   splChart.update();
-});
+};
 
-client.on("error", (err) => {
-  console.error("MQTT error:", err);
-  statusEl.textContent = "STATUS: ERROR";
-});
+function onConnect() {
+  console.log("MQTT connected");
+  statusEl.textContent = "STATUS: CONNECTED";
+  client.subscribe("spl/data");
+}
 
-client.on("close", () => {
-  console.warn("MQTT disconnected");
-  statusEl.textContent = "STATUS: DISCONNECTED";
+client.connect({
+  userName: "esp32-v1",
+  password: "RajaSawit_2026",
+  useSSL: true,
+  onSuccess: onConnect
 });
