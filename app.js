@@ -318,7 +318,7 @@ client.connect({
   password: PASS,
   useSSL: true,
   onSuccess: onConnect,
-  reconnect: true
+  // reconnect: true
 });
 
 // =========================
