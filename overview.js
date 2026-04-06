@@ -1,39 +1,57 @@
 // =========================
-// CONFIG
+// CONFIG & STATE
 // =========================
 const BROKER = "b8ae4809915f4027b2d18c7fc219b204.s1.eu.hivemq.cloud";
 const PORT = 8884;
 const USER = "esp32-v1";
 const PASS = "RajaSawit_2026";
 
-const TIMEOUT = 5000; // ms → dianggap offline
+const TIMEOUT = 10000; // ms → dianggap offline
 
-// =========================
-// STATE
-// =========================
+// 1. Tentukan daftar gate yang dimiliki, hardcoded
+const raw_nodes = ["gate1", "gate2", "gate3", "gate4", "gate5", "gate6"];
+const INITIAL_NODES = raw_nodes.map(node => node.toUpperCase());
 const nodes = {}; 
-// nodes[nodeId] = {
-//   value,
-//   lastUpdate,
-//   el
-// }
 
-// =========================
-// DOM
-// =========================
+
+//DOM
 const grid = document.getElementById("grid");
+
 
 // =========================
 // CREATE CARD (Living Card)
 // =========================
 function createCard(nodeId) {
+  //mencegah duplikasi jika card sudah diinisialisasi
+  if (nodes[nodeId]) return;
+
   const el = document.createElement("div");
-  el.className = "card offline";
+  
+  el.className = "card offline"; //kondisi default offline
 
   el.innerHTML = `
-    <div class="node-title">${nodeId.toUpperCase()}</div>
-    <div class="value">-- dBA</div>
-    <div class="sub">OFFLINE</div>
+  <div class="card-header">
+        <div class="node-badge">${nodeId.replace('gate', '').toUpperCase()}</div>
+        <div class="status-indicator">
+            <span class="status-text">OFFLINE</span>
+            <div class="status-dot"></div>
+        </div>
+  </div>
+
+  <div class="card-body">
+        <div class="main-stat">
+            <h2 class="value">--</h2>
+            <span class="unit">dBA</span>
+        </div>
+        <div class="trend-indicator trend-neutral">
+            <span class="trend-icon">--</span>
+            <span class="trend-pct">--%</span>        
+        </div>
+  </div>
+
+  <div class="card-footer">
+        <span class="last-seen">Last updated: Never</span>
+  </div>
   `;
 
   el.onclick = () => {
@@ -44,54 +62,68 @@ function createCard(nodeId) {
 
   nodes[nodeId] = {
     value: null,
-    lastUpdate: 0,
-    el: el
+    lastUpdate: 0, //langsung dianggap Watchdog offline
+    el: el,
+    previousValue: null //dibutuhkan untuk menghitung tren
   };
 }
 
-// =========================
-// UPDATE CARD UI
-// =========================
-function updateCard(nodeId, value) {
-  if (!nodes[nodeId]) {
+//Fungsi untuk inisialisasi card saat startup, biar instan
+function initDashboard() {
+  INITIAL_NODES.forEach(nodeId => {
     createCard(nodeId);
-  }
-
-  const node = nodes[nodeId];
-
-  node.value = value;
-  node.lastUpdate = Date.now();
-
-  const isOnline = true;
-
-  const valueEl = node.el.querySelector(".value");
-  const statusEl = node.el.querySelector(".sub");
-
-  valueEl.textContent = value.toFixed(1) + " dBA";
-  statusEl.textContent = "ONLINE";
-
-//   node.el.classList.remove("offline");
-//   node.el.classList.add("online");
-
-node.el.classList.remove("online", "warning", "danger", "offline");
-
-if (value > 80) {
-  node.el.classList.add("danger");
-} else if (value > 60) {
-  node.el.classList.add("warning");
-} else {
-  node.el.classList.add("online");
+  });
 }
 
-  // optional: threshold warna
-  if (value > 80) {
-    valueEl.style.color = "#EF4444";
-  } else if (value > 60) {
-    valueEl.style.color = "#FACC15";
-  } else {
-    valueEl.style.color = "#22C55E";
+initDashboard();
+
+function updateCard(nodeId, value) {
+    if (!nodes[nodeId]) createCard(nodeId);
+    const node = nodes[nodeId];
+  
+    // 1. Hitung Tren (%)
+    let trendPct = 0;
+    let trendIcon = "•";
+    let trendClass = "trend-neutral";
+  
+    if (node.previousValue !== null && node.previousValue !== 0) {
+        trendPct = ((value - node.previousValue) / node.previousValue) * 100;
+        if (value > node.previousValue) {
+            trendIcon = "▲";
+            trendClass = "trend-up"; // Merah: Kebisingan naik itu buruk
+        } else if (value < node.previousValue) {
+            trendIcon = "▼";
+            trendClass = "trend-down"; // Hijau: Kebisingan turun itu baik
+        }
+    }
+  
+    // 2. Update State
+    node.previousValue = value;
+    node.value = value;
+    node.lastUpdate = Date.now();
+  
+    // 3. Update UI
+    const el = node.el;
+  
+    //Angka Utama
+    el.querySelector(".value").textContent = value.toFixed(1);
+    
+    // Update tren dengan class warna
+    const trendContainer = el.querySelector(".trend-indicator");
+    trendContainer.className = `trend-indicator ${trendClass}`;
+    el.querySelector(".trend-pct").textContent = Math.abs(trendPct).toFixed(1) + "%";
+    el.querySelector(".trend-icon").textContent = trendIcon;
+  
+    // Update Status & Time
+    el.querySelector(".status-text").textContent = "ONLINE";
+    el.querySelector(".last-seen").textContent = "Updated: " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+    // 4. Update Level Bahaya (Card Border/Glow)
+    el.classList.remove("online", "warning", "danger", "offline");
+    if (value > 80) el.classList.add("danger", "online");
+    else if (value > 60) el.classList.add("warning", "online");
+    else el.classList.add("online");
   }
-}
 
 // =========================
 // OFFLINE WATCHDOG
@@ -102,16 +134,21 @@ function checkOffline() {
   Object.keys(nodes).forEach(nodeId => {
     const node = nodes[nodeId];
 
+// Jika lewat timeout, ubah UI ke state offline    
     if (now - node.lastUpdate > TIMEOUT) {
-      const statusEl = node.el.querySelector(".sub");
+      const el = node.el;
 
-      statusEl.textContent = "OFFLINE";
-      node.el.classList.remove("online", "warning", "danger");
-      node.el.classList.add("offline");
+     //Peraiki selector agar tidak null
+     const statusText = el.querySelector(".status-text");
+     if (statusText) statusText.textContent = "OFFLINE";
+
+     el.classList.remove("online", "warning", "danger");
+     el.classList.add("offline");
     }
   });
 }
 
+// Jalankan pengecekan setiap 2 detik
 setInterval(checkOffline, 2000);
 
 // =========================
@@ -133,9 +170,9 @@ client.onMessageArrived = function (message) {
   const topic = message.destinationName;
   const payload = message.payloadString;
 
+  // Ekstrak nodeId dari topic monitoring/nodeId/db
   // contoh topic: monitoring/gate1/db
-  const parts = topic.split("/");
-  const nodeId = parts[1];
+  const nodeId = topic.split("/")[1];
 
   let value;
 
@@ -147,9 +184,9 @@ client.onMessageArrived = function (message) {
     value = parseFloat(payload);
   }
 
-  if (isNaN(value)) return;
-
+  if (!isNaN(value)) {
   updateCard(nodeId, value);
+  }
 };
 
 // connect
@@ -157,7 +194,7 @@ function onConnect() {
   console.log("MQTT connected (overview)");
 
   // wildcard → semua node
-  client.subscribe("monitoring/+/db");
+  client.subscribe("monitoring/+/db"); //subscribe ke semua node
 }
 
 client.connect({
@@ -165,5 +202,6 @@ client.connect({
   password: PASS,
   useSSL: true,
   onSuccess: onConnect,
-  // reconnect: true
+//   reconnect: true
 });
+
