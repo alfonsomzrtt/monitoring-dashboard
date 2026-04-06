@@ -5,17 +5,29 @@
   <title>Monitoring Overview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style-overview.css">
 </head>
-<body>
+  <body>
+      <div class="page">
 
-    <h1>Acoustic Level Monitoring</h1>
+        <header class="header">
+          <h1>Acoustic Level Monitoring</h1>        
+          <p>Realtime Noise Monitoring System</p>
+        </header>
 
-    <div class="grid" id="grid"></div>
+        <main class="dashboard-container">
+          <div class="grid" id="grid"></div>
+        </main>
+
+        <footer style="text-align: center; margin-top: 40px; opacity: 0.5; font-size: 12px;">
+          <p>&copy; 2026 Acoustic Monitoring System</p>
+        </footer> 
+     </div>       
+
 
     <!-- jangan pakai versi .min.js -->
-    <script src="https://unpkg.com/paho-mqtt@1.0.3/mqttws31.js"></script> 
-    <script src="overview.js"></script>
+    <script src="js/mqttws31.js"></script> 
+    <script src="js/overview.js"></script>
 
-</body>
+  </body>
 </html>
