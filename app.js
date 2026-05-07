@@ -269,9 +269,9 @@ function downloadCSV() {
   }).replace(':', '-');
 
 //Susun isi CSV 
-  let csvContent = "'Timestamp','SPL (dBA)'\n";
+  let csvContent = '"Timestamp","SPL (dBA)"\n';
   logBuffer.forEach(row => {
-    csvContent += `'${row.time}', '${row.spl}'\n`;
+    csvContent += `"${row.time}","${row.spl}"\n`;
   });
 
   const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
