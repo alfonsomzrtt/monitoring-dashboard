@@ -180,7 +180,7 @@ canvas {
   color: var(--green); /* Default warna normal */
 }
 
-.chat-actions {
+.chart-actions {
   display: flex; 
   justify-content: center;
   margin-top: 15px;
