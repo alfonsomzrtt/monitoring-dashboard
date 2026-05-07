@@ -191,8 +191,9 @@ canvas {
   font-weight: 600;
   cursor: pointer;
   display: flex;
-  align-items: center;
+  align-items: right;
   gap: 8px;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .btn-export:hover {
