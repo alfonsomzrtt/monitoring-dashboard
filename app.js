@@ -252,6 +252,9 @@ function downloadCSV() {
     return;
   }
 
+  // 1. Ambil waktu sistem saat ini (mirip logika di onMessageArrived)
+  const now = new Date();
+  
   //Format tanggal: 07-05-26 (Ganti '/' menjadi '-' agar aman untuk nama file)
   const dateFile = now.toLocaleDateString('id-ID', {
     day: '2-digit',
