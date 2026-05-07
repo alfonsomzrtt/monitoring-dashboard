@@ -244,6 +244,7 @@ setInterval(() => {
 }, 2000);
 
 
+
 //Fungsi Download Log CSV 
 function downloadCSV() {
   if (logBuffer.length === 0) {
@@ -251,15 +252,19 @@ function downloadCSV() {
     return;
   }
 
-  let csvContent = "data:text/csv;charset=utf-8,Timestamp,SPL (dBA)\n";
+  let csvContent = "'Timestamp','SPL (dBA)'\n";
   logBuffer.forEach(row => {
-    csvContent += `${row.time}, ${row.spl}\n`;
+    csvContent += `"${row.time}", "${row.spl}"\n`;
   });
 
-  const encodeUri = encodeURI(csvContent);
+  const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+
   const link = document.createElement("a");
-  link.setAttribute("href", encodeUri);
-  link.setAttribute("download", `${nodeId}-log.csv`);
+  link.setAttribute("href", url);
+
+  link.setAttribute("download", `${nodeId}_${new Date().getTime()}-log.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
