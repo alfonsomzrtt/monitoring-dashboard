@@ -252,9 +252,6 @@ function downloadCSV() {
     return;
   }
 
-  //Ambil waktu sistem
-  const now = new Date(); 
-
   //Format tanggal: 07-05-26 (Ganti '/' menjadi '-' agar aman untuk nama file)
   const dateFile = now.toLocaleDateString('id-ID', {
     day: '2-digit',
@@ -269,9 +266,9 @@ function downloadCSV() {
   }).replace(':', '-');
 
 //Susun isi CSV 
-  let csvContent = "Timestamp,SPL (dBA)\n";
+  let csvContent = "'Timestamp','SPL (dBA)'\n";
   logBuffer.forEach(row => {
-    csvContent += `${row.time}, ${row.spl}\n`;
+    csvContent += `'${row.time}', '${row.spl}'\n`;
   });
 
   const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
@@ -281,7 +278,7 @@ function downloadCSV() {
   const link = document.createElement("a");
   link.setAttribute("href", url);
 
-  link.setAttribute("download", `${nodeId}_${new Date().getTime()}_log.csv`);
+  link.setAttribute("download", `${nodeId}_${dateFile}_${timeFile}_log.csv`);
   document.body.appendChild(link);
   link.click();
   
