@@ -9,6 +9,8 @@ const PASS = "RajaSawit_2026";
 const MAX_POINTS = 30;
 const TIMEOUT = 5000; // ms
 
+let logBuffer = [];
+
 // =========================
 // GET NODE FROM URL
 // =========================
@@ -151,6 +153,14 @@ client.onMessageArrived = function (message) {
     spl = parseFloat(payload);
   }
 
+  if (spl !== undefined && !isNaN(spl)) {
+  const timestamp = new Date().toLocaleString();
+  logBuffer.push({ time: timestamp, spl: spl.toFixed(1) });
+
+//batasi logbuffernya agar tidak terlalu berat
+  if (logBuffer.length > 5000) logBuffer.shift();
+}
+
   if (isNaN(spl)) return;
 
   lastUpdate = Date.now();
@@ -232,3 +242,26 @@ setInterval(() => {
     // JANGAN mereset splEl ke "--" di sini agar persistence terjaga
   }
 }, 2000);
+
+
+//Fungsi Download Log CSV 
+function downloadCSV() {
+  if (logBuffer.length === 0) {
+    alert('Belum ada data terkumpul untuk diunduh!');
+    return;
+  }
+
+  let csvContent = "data:text/csv;charset=utf-8,Timestamp,SPL (dBA)\n";
+  logBuffer.forEach(row => {
+    csvContent += `${row.time}, ${row.spl}\n`;
+  });
+
+  const encodeUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodeUri);
+  link.setAttribute("download", `${NODE_ID}-log.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+}
