@@ -259,7 +259,7 @@ function downloadCSV() {
   const encodeUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodeUri);
-  link.setAttribute("download", `${NODE_ID}-log.csv`);
+  link.setAttribute("download", `${nodeId}-log.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
