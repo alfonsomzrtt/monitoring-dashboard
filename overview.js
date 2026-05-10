@@ -1,10 +1,11 @@
 // =========================
 // CONFIG & STATE
 // =========================
-const BROKER = "b8ae4809915f4027b2d18c7fc219b204.s1.eu.hivemq.cloud";
-const PORT = 8884;
-const USER = "esp32-v1";
-const PASS = "RajaSawit_2026";
+//sebagai contoh, ubah sendiri sesuai konfigurasi HIVEMQ MQTT broker
+const BROKER = "b8ae4809915f4027b2d18c7fc2109b204.s1.eu.hivemq.cloud";
+const PORT = 8881;
+const USER = "esp32-v2";
+const PASS = "RajaSawit_2021";
 
 const TIMEOUT = 10000; // ms → dianggap offline
 
@@ -238,3 +239,26 @@ client.connect({
 //   reconnect: true
 });
 
+const toggleSwitch = document.querySelector('#theme-toggle');
+const currentTheme = localStorage.getItem('theme');
+
+// Cek apakah sebelumnya sudah memilih Dark Mode
+if (currentTheme) {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
+  }
+}
+
+// Fungsi untuk mengganti tema
+function switchTheme(e) {
+  if (e.target.checked) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+  } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+  }    
+}
+
+toggleSwitch.addEventListener('change', switchTheme, false);
