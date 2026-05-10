@@ -1,3 +1,5 @@
+
+//tes kode baru
 // =========================
 // CONFIG
 // =========================
@@ -154,12 +156,12 @@ client.onMessageArrived = function (message) {
   }
 
   if (spl !== undefined && !isNaN(spl)) {
-  const timestamp = new Date().toLocaleString();
-  logBuffer.push({ time: timestamp, spl: spl.toFixed(1) });
+    const timestamp = new Date().toLocaleString();
+    logBuffer.push({ time: timestamp, spl: spl.toFixed(1) });
 
 //batasi logbuffernya agar tidak terlalu berat
-  if (logBuffer.length > 5000) logBuffer.shift();
-}
+    if (logBuffer.length > 5000) logBuffer.shift();
+  }
 
   if (isNaN(spl)) return;
 
@@ -243,8 +245,6 @@ setInterval(() => {
   }
 }, 2000);
 
-
-
 //Fungsi Download Log CSV 
 function downloadCSV() {
   if (logBuffer.length === 0) {
@@ -252,9 +252,9 @@ function downloadCSV() {
     return;
   }
 
-  // 1. Ambil waktu sistem saat ini (mirip logika di onMessageArrived)
-  const now = new Date();
-  
+  //Ambil waktu sistem
+  const now = new Date(); 
+
   //Format tanggal: 07-05-26 (Ganti '/' menjadi '-' agar aman untuk nama file)
   const dateFile = now.toLocaleDateString('id-ID', {
     day: '2-digit',
@@ -269,9 +269,9 @@ function downloadCSV() {
   }).replace(':', '-');
 
 //Susun isi CSV 
-  let csvContent = '"Timestamp","SPL (dBA)"\n';
+  let csvContent = "Timestamp,SPL (dBA)\n";
   logBuffer.forEach(row => {
-    csvContent += `"${row.time}","${row.spl}"\n`;
+    csvContent += `${row.time},${row.spl}\n`;
   });
 
   const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
@@ -284,7 +284,31 @@ function downloadCSV() {
   link.setAttribute("download", `${nodeId}_${dateFile}_${timeFile}_log.csv`);
   document.body.appendChild(link);
   link.click();
-  
+
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+const toggleSwitch = document.querySelector('#theme-toggle');
+const currentTheme = localStorage.getItem('theme');
+
+// Cek apakah sebelumnya sudah memilih Dark Mode
+if (currentTheme) {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
+  }
+}
+
+// Fungsi untuk mengganti tema
+function switchTheme(e) {
+  if (e.target.checked) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+  } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+  }    
+}
+
+toggleSwitch.addEventListener('change', switchTheme, false);
