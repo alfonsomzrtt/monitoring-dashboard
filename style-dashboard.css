@@ -190,25 +190,23 @@ canvas {
 
 /*Button Ekspor CSV */
 .btn-export {
-  background-color: #48bb78;
+  align-items: center;
   color: #ffffff;
-  border: none;
-  border-radius: 6px;
+  font-size: 18px;
+  background: #48bb78;
+  border: none !important;
   padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
+  box-shadow: 0 4px 0 #38A169;
+  border-radius: 12px;
   cursor: pointer;
-  display: flex;
-  align-items: right;
-  gap: 8px;
-  transition: background 0.2s, transform 0.1s;
 }
 
 .btn-export:hover {
-  background-color: #38A169;
+  background-color: #48bb78;;
   transform: translateY(-1px);
 }
 
 .btn-export:active {
-  transform: translateY(0);
+  box-shadow: none;
+  transform: translate(0, 4px);
 }
