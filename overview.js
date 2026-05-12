@@ -3,7 +3,7 @@
 // =========================
 //sebagai contoh, ubah sendiri sesuai konfigurasi HIVEMQ MQTT broker
 const BROKER = "b8ae4809915f4027b2d18c7fc2109b204.s1.eu.hivemq.cloud";
-const PORT = 8883;
+const PORT = 8884;
 const USER = "esp32-v1";
 const PASS = "RajaSawit_2026";
 
