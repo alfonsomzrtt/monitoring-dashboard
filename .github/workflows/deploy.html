@@ -15,10 +15,16 @@ jobs:
       - name: Inject Secrets into JS files
         run: |
         # inject app.js
-          sed -i "s/__MQTT_BROKER__/${{ secrets.MQTT_BROKER }}/g" *.js
-          sed -i "s/__MQTT_PORT__/${{ secrets.MQTT_PORT }}/g" *.js
-          sed -i "s/__MQTT_USER__/${{ secrets.MQTT_USER }}/g" *.js
-          sed -i "s/__MQTT_PASS__/${{ secrets.MQTT_PASS }}/g" *.js
+          sed -i "s/__MQTT_BROKER__/${{ secrets.MQTT_BROKER }}/g" app.js
+          sed -i "s/__MQTT_PORT__/${{ secrets.MQTT_PORT }}/g" app.js
+          sed -i "s/__MQTT_USER__/${{ secrets.MQTT_USER }}/g" app.js
+          sed -i "s/__MQTT_PASS__/${{ secrets.MQTT_PASS }}/g" app.js
+
+        # Inject overview.js
+          sed -i "s/__MQTT_BROKER__/${{ secrets.MQTT_BROKER }}/g" overview.js
+          sed -i "s/__MQTT_PORT__/${{ secrets.MQTT_PORT }}/g" overview.js
+          sed -i "s/__MQTT_USER__/${{ secrets.MQTT_USER }}/g" overview.js
+          sed -i "s/__MQTT_PASS__/${{ secrets.MQTT_PASS }}/g" overview.js
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
