@@ -3,7 +3,7 @@
 // CONFIG
 // =========================
 const BROKER = "__MQTT_BROKER__";
-const PORT = __MQTT_PORT__;
+const PORT = "__MQTT_PORT__";
 const USER = "__MQTT_USER__";
 const PASS = "__MQTT_PASS__";
 
