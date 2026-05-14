@@ -130,7 +130,7 @@ const splChart = new Chart(ctx, {
 // =========================
 const client = new Paho.MQTT.Client(
   BROKER,
-  PORT,
+  Number(PORT), //Mengubah string menjadi angka port
   "detail_" + nodeId + "_" + Math.random()
 );
 
