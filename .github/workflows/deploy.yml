@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - acoustic
+#permissions
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
