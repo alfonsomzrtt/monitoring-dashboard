@@ -2,10 +2,10 @@
 // CONFIG & STATE
 // =========================
 //sebagai contoh, ubah sendiri sesuai konfigurasi HIVEMQ MQTT broker
-const BROKER = "b8ae4809915f4027b2d18c7fc219b204.s1.eu.hivemq.cloud";
-const PORT = 8884;
-const USER = "esp32-v1";
-const PASS = "RajaSawit_2026";
+const BROKER = "__MQTT_BROKER__";
+const PORT = __MQTT_PORT__;
+const USER = "__MQTT_USER__";
+const PASS = "__MQTT_PASS__";
 
 const TIMEOUT = 10000; // ms → dianggap offline
 
