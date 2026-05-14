@@ -14,7 +14,6 @@ jobs:
 
       - name: Inject Secrets into JS files
         run: |
-          # inject app.js
           find . -name "*.js" -type f -exec sed -i "s/__MQTT_BROKER__/${{ secrets.MQTT_BROKER }}/g" {} +
           find . -name "*.js" -type f -exec sed -i "s/__MQTT_PORT__/${{ secrets.MQTT_PORT }}/g" {} +
           find . -name "*.js" -type f -exec sed -i "s/__MQTT_USER__/${{ secrets.MQTT_USER }}/g" {} +
