@@ -190,7 +190,7 @@ setInterval(checkOffline, 2000);
 // =========================
 const client = new Paho.MQTT.Client(
   BROKER,
-  PORT,
+  Number(PORT), //mengubah string menjadi angka port
   "overview_" + Math.random()
 );
 
