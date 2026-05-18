@@ -288,6 +288,19 @@ function downloadCSV() {
   URL.revokeObjectURL(url);
 }
 
+//mengingatkan pengguna untuk ekspor csv dan menahannya sebelum refresh/keluar halaman
+window.addEventListener('beforeunload', function (e) {
+  // Hanya kunci halaman jika logBuffer sudah berisi data sensor
+  if (logBuffer.length > 0) {
+    const pesanPeringatan = "CSV belum diekspor. Yakin ingin keluar?";
+    
+    // Memasukkan teks sesuai keinginan Anda (untuk kompatibilitas)
+    e.returnValue = pesanPeringatan; 
+    return pesanPeringatan;
+  }
+});
+
+
 const toggleSwitch = document.querySelector('#theme-toggle');
 
 /**
